@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const routes = require('./routes/');
+const { sequelize } = require("./models");
 const app = express();
 const dotenv = require("dotenv")
 const port = process.env.PORT || 8001
@@ -12,7 +13,6 @@ const onError = (err) => {
     if (err.syscall !== 'listen') {
         throw err;
     }
-
     const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
     switch (err.code) {
@@ -30,7 +30,10 @@ const onError = (err) => {
 }
 
 dotenv.config()
-app.set("port", port)
+
+
+
+app.set("port", parseInt(port))
 
 
 // view engine setup
@@ -43,6 +46,18 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//DB
+
+sequelize
+    .sync({ force: false })
+    .then(() => {
+        console.log("데이터베이스 연결 성공");
+    })
+    .catch((err) => {
+        console.error(err);
+    });
+
+//route
 app.use('/', routes);
 
 // catch 404 and forward to error handler
@@ -51,6 +66,7 @@ app.use((req, res, next) => {
 });
 
 // error handler
+
 app.use((req, res, next, err) => {
     // set locals, only providing error in development
     console.log(err)
