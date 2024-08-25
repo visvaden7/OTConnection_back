@@ -11,7 +11,6 @@ class User extends Sequelize.Model {
                 nick: {
                     type: Sequelize.STRING(15),
                     allowNull: false,
-                    unique: true,
                 },
                 password: {
                     type: Sequelize.STRING(100),
