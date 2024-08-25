@@ -1,5 +1,6 @@
 const passport = require("passport");
 const google = require("./googleStrategy")
+const kakao = require('./kakaoStrategy')
 const {User} = require("../models");
 
 module.exports = () => {
@@ -9,7 +10,7 @@ module.exports = () => {
     });
 
     passport.deserializeUser((user, done) => {
-        console.log("user>>>>>>", user)
+        // console.log("user>>>>>>", user)
         let id = user.id
         User.findOne({
             where: {id}
@@ -21,4 +22,6 @@ module.exports = () => {
             .catch((err) => done(err));
     });
     google();
+    kakao();
+
 };

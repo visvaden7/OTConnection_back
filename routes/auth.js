@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const {googleLogout, sessionCheck} = require("../controller/auth");
+const {googleLogout, sessionCheck, kakaoLogout} = require("../controller/auth");
 
 
 router.post('/googleLogout', googleLogout)
+
+router.post('/kakaoLogout', kakaoLogout)
 
 router.get('/session-check', sessionCheck);
 
@@ -33,4 +35,26 @@ router.get(
     }
 );
 
+router.get(
+    "/kakao",
+    passport.authenticate("kakao", {
+        failureRedirect: "/?loginError=카카오로그인 실패",
+    }),
+    (req, res) => {
+        console.log(">>>>>test")
+        res.redirect(`${process.env.FRONT_SERVER_URL}`)
+    }
+);
+
+
+router.get("/kakao/callback", passport.authenticate('kakao', {
+        failureRedirect: "/?loginError='카카오로그인 실패"
+    }),
+    (req, res) => {
+        console.log("connect.sid", req.cookies['connect.sid'])
+        console.log("AccessToken", req.cookies['accessToken'])
+        res.redirect(process.env.FRONT_SERVER_URL)
+    })
+
 module.exports = router;
+
