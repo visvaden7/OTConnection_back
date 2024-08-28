@@ -11,32 +11,13 @@ const passportConfig = require("./passport");
 const { sequelize } = require("./models");
 const app = express();
 const routes = require('./routes/');
+const {onError, errorHandler} = require('./utils/error')
 
 passportConfig();
 dotenv.config()
 
 const port = process.env.PORT || 8001
 app.set("port", parseInt(port))
-
-const onError = (err) => {
-    if (err.syscall !== 'listen') {
-        throw err;
-    }
-    const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
-
-    switch (err.code) {
-        case 'EACCES':
-            console.error(`${bind} requires elevated privileges`);
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(`${bind} is already in use`);
-            process.exit(1);
-            break;
-        default:
-            throw err;
-    }
-}
 
 // cors처리
 app.use(cors({
@@ -53,7 +34,7 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public/dist')));
 
 //DB
 
@@ -86,7 +67,13 @@ app.use(passport.session());
 
 
 //route
-app.use('/', routes);
+app.use('/api', routes);
+// 정적 파일을 서빙하기 위한 설정 (리액트 빌드 파일)
+app.use(express.static(path.join(__dirname, 'public/dist')));
+// React Router를 위해 모든 경로를 index.html로 리디렉션
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/dist', 'index.html')); // 올바른 경로 설정
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -94,17 +81,9 @@ app.use((req, res, next) => {
 });
 
 // error handler
-app.use(( err, req, res, next) => {
-    // set locals, only providing error in development
-    // console.log(req, res, next, err)
-    res.locals.message = err.message || "not error";
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
-});
+app.use(errorHandler)
 
 app.listen(app.get("port"), () => {
     console.log(app.get("port"), "번 포트에서 대기중")
 })
-app.on('error', onError)
+app.on('error', (err) => onError(err, port))
