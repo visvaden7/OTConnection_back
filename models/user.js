@@ -27,13 +27,17 @@ class User extends Sequelize.Model {
                 },
                 snsId: {
                     type: Sequelize.STRING(250),
-                    allowNull: true,
+                    allowNull: false,
                 },
+                role: {
+                    type: Sequelize.ENUM('admin', 'user'),
+                    allowNull: false,
+                    defaultValue: 'user'
+                }
             },
             {
                 sequelize,
                 timestamps: true,
-                underscored: false,
                 modelName: "User",
                 tableName: "users",
                 paranoid: true,
