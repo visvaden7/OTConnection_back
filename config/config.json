@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
+    "password": "rootroot",
     "database": "OTConnection",
-    "host": "127.0.0.1",
+    "host": "team02-rds.c9kciawyijr0.ap-northeast-2.rds.amazonaws.com",
     "dialect": "mysql"
   },
   "test": {

@@ -21,8 +21,7 @@ module.exports = () => {
             },
           });
           if (exUser) {
-            console.log("exUser_NAVER>>", exUser);
-            console.log("test",profile)
+            // console.log("exUser_NAVER>>", exUser);
             done(null, exUser);
           } else {
             const newUser = await User.create({

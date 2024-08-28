@@ -1,4 +1,4 @@
-// error.js
+
 
 // onError 함수 정의
 const onError = (err, port) => {
