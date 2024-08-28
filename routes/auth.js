@@ -17,7 +17,7 @@ router.get(
         failureRedirect: "/?loginError=구글로그인 실패",
     }),
     (req, res) => {
-        res.redirect(`${process.env.FRONT_SERVER_URL}`)
+        res.redirect("/")
     }
 );
 
@@ -30,7 +30,7 @@ router.get(
         // 로그인 성공 시, accessToken과 profile 정보를 프론트엔드로 전달
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
-        res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect("/")
 
     }
 );
@@ -41,8 +41,7 @@ router.get(
         failureRedirect: "/?loginError=카카오로그인 실패",
     }),
     (req, res) => {
-        console.log(">>>>>test")
-        res.redirect(`${process.env.FRONT_SERVER_URL}`)
+        res.redirect("/")
     }
 );
 
@@ -51,10 +50,31 @@ router.get("/kakao/callback", passport.authenticate('kakao', {
         failureRedirect: "/?loginError='카카오로그인 실패"
     }),
     (req, res) => {
+        // console.log("connect.sid", req.cookies['connect.sid'])
+        // console.log("AccessToken", req.cookies['accessToken'])
+        res.redirect("/")
+    })
+
+router.get(
+    "/naver",
+    passport.authenticate("naver", {
+        failureRedirect: "/?loginError=네이버로그인 실패",
+    }),
+    (req, res) => {
+        res.redirect("/")
+    }
+);
+
+
+router.get("/naver/callback", passport.authenticate('naver', {
+        failureRedirect: "/?loginError='네이버로그인 실패"
+    }),
+    (req, res) => {
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
-        res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect("/")
     })
+
 
 module.exports = router;
 

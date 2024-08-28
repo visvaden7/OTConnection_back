@@ -9,7 +9,6 @@ module.exports = () => {
       {
         clientID: process.env.KAKAO_CLIENT_ID,
         callbackURL: process.env.KAKAO_CALLBACK_URL,
-        // callbackURL: "http://localhost:8001/auth/kakao/callback"
       },
       async (accessToken, refreshToken, profile, done) => {
         // console.log("kakao profile", profile);
