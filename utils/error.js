@@ -22,7 +22,7 @@ const onError = (err, port) => {
     }
 };
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, _) => {
     // set locals, only providing error in development
     res.locals.message = err.message || 'Not error';
     res.locals.error = req.app.get('env') === 'development' ? err : {};
