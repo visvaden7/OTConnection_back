@@ -9,20 +9,22 @@ exports.verticalBarChartData = async(req, res) => {
     });
 
     const data = top5Records.map(record => {
-        return {title: record.title, imdb_rate: record.imdb_rating, release_date: record.release_date}
+        return {title: record.title, imdb_rate: record.imdb_rating, release_date: record.release_date, poster: record.ott_profile_link}
     })
-    console.log(data.sort((a,b) => new Date(a.release_date) - new Date(b.release_date)))
+    data.sort((a,b) => new Date(a.release_date) - new Date(b.release_date))
     let titleArray=[];
     let imdbArray = [];
     let releaseDateArray = [];
-    console.log(data)
+    let posterArray = [];
+    // console.log(data)
     data.map((it) => {
-        console.log(it)
+        // console.log(it)
         titleArray.push(it.title)
         imdbArray.push(it.imdb_rate)
         releaseDateArray.push(it.release_date)
+        posterArray.push(it.poster)
     })
-    res.json({title: titleArray, imdb_rate: imdbArray, release_date: releaseDateArray})
+    res.json({title: titleArray, imdb_rate: imdbArray, release_date: releaseDateArray, poster:posterArray})
 
 }
 
@@ -58,8 +60,7 @@ exports.carouselData = async(req, res) => {
         order: [['release_date', 'DESC']], // 특정 컬럼을 기준으로 내림차순 정렬
         limit: 6,
     })
-
-    console.log(new6)
+    // console.log(new6)
     res.json({data:new6})
 }
 
