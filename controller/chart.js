@@ -1,6 +1,5 @@
 const {Ip} = require("../models/")
 const {Op, fn, literal} = require("sequelize");
-const {interestWebtoon} = require("./chart");
 
 exports.verticalBarChartData = async(req, res) => {
     const top5Records = await Ip.findAll({
