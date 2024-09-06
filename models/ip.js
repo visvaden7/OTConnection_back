@@ -123,6 +123,12 @@ class Ip extends Sequelize.Model {
     static associate(db) {
         db.Ip.hasMany(db.OttUrl,{foreignKey:"ip_id", sourceKey:"ip_id"})
         db.Ip.hasMany(db.Trends, {foreignKey:"ip_id", sourceKey: "ip_id"})
+
+        db.Ip.belongsToMany(db.Person, {
+            through: 'IpPerson',
+            foreignKey: 'ip_id',
+            otherKey: 'people_id',
+        });
     }
 }
 

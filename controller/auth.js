@@ -15,9 +15,6 @@ exports.sessionCheck = (req, res) => {
 
 exports.googleLogout = async (req, res, next) => {  // 비동기 함수로 변경
     try {
-        // Google 로그아웃 요청
-        const response = await axios.post('https://accounts.google.com/logout');
-        console.log(response)
         // Passport 로그아웃 및 세션 삭제
         await new Promise((resolve, reject) => {
             req.logout((err) => {
