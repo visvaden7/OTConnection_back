@@ -13,6 +13,10 @@ class Ip extends Sequelize.Model {
                     type: Sequelize.STRING(40),
                     allowNull: false,
                 },
+                webtoon_title: {
+                    type: Sequelize.STRING(40),
+                    allowNull: false,
+                },
                 ott_platform: {
                     type: Sequelize.STRING(40),
                     allowNull: true,

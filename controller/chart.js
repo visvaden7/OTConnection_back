@@ -42,10 +42,10 @@ exports.sideStackBarChartData = async(req, res) => {
 exports.doughnutChartData = async(req, res) => {
     const platformCounts = await Ip.findAll({
         attributes: [
-            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%Netflix%' THEN 1 END`)), 'NetflixCount'],
-            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%Wavve%' THEN 1 END`)), 'WavveCount'],
-            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%Tving%' THEN 1 END`)), 'TvingCount'],
-            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%Disney+%' THEN 1 END`)), 'DisneyCount'],
+            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%NETFLIX%' THEN 1 END`)), 'NetflixCount'],
+            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%WAVVE%' THEN 1 END`)), 'WavveCount'],
+            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%TVING%' THEN 1 END`)), 'TvingCount'],
+            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%DISNEY+%' THEN 1 END`)), 'DisneyCount'],
         ]
     })
 
