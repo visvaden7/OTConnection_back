@@ -1,5 +1,6 @@
 const {Ip} = require("../models/")
 const {Op, Sequelize} = require("sequelize");
+const {shuffle} = require("../utils/shuffle");
 
 exports.focusWebtoonOttComboData = async (req, res) => {
     const sixMonthsAgo = new Date()
@@ -80,73 +81,83 @@ exports.nowBestWebtoon = async (req, res) => {
 
 exports.recommendByGenre = async (req, res) => {
     try {
-        const genre = decodeURIComponent(req.query.genre);
-        const recommendOttData = (await Ip.findAll({
-            where: {
-                ott_platform: {
-                    [Op.ne]: null,
-                    [Op.ne]: ''
+        const genreGroup = [
+            {name: "로맨스", genres:["로맨스"]},
+            {name: "드라마", genres:["드라마"]},
+            {name: "액션/범죄", genres:['액션','범죄']},
+            {name: "판타지/SF", genres:['판타지','SF']},
+            {name: "스릴러/호러", genres:['스릴러','호러']},
+        ]
+
+        const results = await Promise.all(genreGroup.map( async (group) => {
+            const recommendOttData = await Ip.findAll({
+                where: {
+                    ott_platform: {
+                        [Op.ne]: null,
+                        [Op.ne]: ''
+                    },
+                    webtoon_platform: {
+                        [Op.ne]: null,
+                        [Op.ne]: ''
+                    },
+                    genre: {
+                        [Op.or]: group.genres.map(g => ({
+                            [Op.like]: `%${g}%`
+                        }))
+                    }
                 },
-                webtoon_platform: {
-                    [Op.ne]: null,
-                    [Op.ne]: ''
+                order: [
+                    ['watch_time', 'DESC']
+                ]
+            })
+            const recommendWebtoonData = await Ip.findAll({
+                where: {
+                    ott_platform: {
+                        [Op.ne]: null,
+                        [Op.ne]: ''
+                    },
+                    webtoon_platform: {
+                        [Op.ne]: null,
+                        [Op.ne]: ''
+                    },
+                    genre: {
+                        [Op.or]: group.genres.map(g => ({
+                            [Op.like]: `%${g}%`
+                        }))
+                    }
                 },
-                genre: {
-                    [Op.like]: `%${genre}%`
+                order: [
+                    ['total_views', 'DESC']
+                ]
+            })
+            const recommendOttList = recommendOttData.map((ott) => {
+                return {
+                    ip_id: ott.dataValues.ip_id,
+                    title: ott.dataValues.title,
+                    ott_platform: ott.dataValues.ott_platform,
+                    genre: ott.dataValues.genre,
+                    watch_time: ott.dataValues.watch_time,
+                    ott_profile: ott.dataValues.ott_profile_link,
+                    type: "ott"
                 }
-            },
-            order: [
-                ['watch_time', 'DESC']
-            ]
-        }))
-        const recommendWebtoonData = (await Ip.findAll({
-            where: {
-                ott_platform: {
-                    [Op.ne]: null,
-                    [Op.ne]: ''
-                },
-                webtoon_platform: {
-                    [Op.ne]: null,
-                    [Op.ne]: ''
-                },
-                genre: {
-                    [Op.like]: `%${genre}%`
+            })
+            const recommnedWebtoonList = recommendWebtoonData.map((webtoon) => {
+                return {
+                    ip_id: webtoon.dataValues.ip_id,
+                    title: webtoon.dataValues.webtoon_title,
+                    webtoon_platform: webtoon.dataValues.webtoon_platform,
+                    genre: webtoon.dataValues.genre,
+                    view: webtoon.dataValues.total_views,
+                    webtoon_profile: webtoon.dataValues.webtoon_profile_link,
+                    type: "webtoon"
                 }
-            },
-            order: [
-                ['total_views', 'DESC']
-            ]
+            })
+            shuffle(recommendOttList)
+            shuffle(recommnedWebtoonList)
+
+            return {[group.name]: [...recommendOttList.slice(0, 3), ...recommnedWebtoonList.slice(0, 3)]}
         }))
-        const recommendOttList = recommendOttData.reduce((ottList, ott) => {
-            let object = {}
-            object = {
-                ip_id: ott.dataValues.ip_id,
-                title: ott.dataValues.title,
-                ott_platform: ott.dataValues.ott_platform,
-                genre: ott.dataValues.genre,
-                watch_time: ott.dataValues.watch_time,
-                ott_profile: ott.dataValues.ott_profile_link
-            }
-            ottList.push(object)
-            return ottList
-        }, [])
-        const recommnedWebtoonList = recommendWebtoonData.reduce((webtoonList, webtoon) => {
-            let object = {}
-            object = {
-                ip_id: webtoon.dataValues.ip_id,
-                title: webtoon.dataValues.webtoon_title,
-                webtoon_platform: webtoon.dataValues.webtoon_platform,
-                genre: webtoon.dataValues.genre,
-                view: webtoon.dataValues.total_views,
-                webtoon_profile: webtoon.dataValues.webtoon_profile_link
-            }
-            webtoonList.push(object)
-            return webtoonList
-        }, [])
-        const data = {ott: recommendOttList, webtoon: recommnedWebtoonList}
-        // console.log(recommendOttList)
-        // console.log(recommnedWebtoonList)
-        res.json(data)
+        res.json(results)
     } catch (err) {
         console.log(err)
         res.json({error: 'Failed to fetch recommend list'})
