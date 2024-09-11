@@ -24,17 +24,15 @@ exports.focusWebtoonOttComboData = async (req, res) => {
         limit: 5, // 상위 5개의 데이터만 불러옵니다.
     });
 
-    const comboData = comboList.reduce((comboArray, ip) => {
-        const object = {
+    const comboData = comboList.map((ip) => {
+        return {
             id: ip.dataValues.ip_id,
             title: ip.dataValues.title,
-            ott: ip.dataValues.ott_platform,
+            ott: ip.dataValues.ott_platform.split(','),
             webtoon: ip.dataValues.webtoon_platform,
             total_rating: (ip.dataValues.rating * 0.5 + ip.dataValues.imdb_rating * 0.5).toFixed(1),
             poster: ip.dataValues.ott_profile_link
         };
-        comboArray.push(object)
-        return comboArray
     }, [])
     console.log(comboData)
     comboData.sort((a, b) => b.total_rating - a.total_rating)
@@ -82,14 +80,13 @@ exports.nowBestWebtoon = async (req, res) => {
 exports.recommendByGenre = async (req, res) => {
     try {
         const genreGroup = [
-            {name: "로맨스", genres:["로맨스"]},
-            {name: "드라마", genres:["드라마"]},
-            {name: "액션/범죄", genres:['액션','범죄']},
-            {name: "판타지/SF", genres:['판타지','SF']},
-            {name: "스릴러/호러", genres:['스릴러','호러']},
+            {name: "drama", genres: ["드라마"]},
+            {name: "romance", genres: ["로맨스"]},
+            {name: "actionCrime", genres: ['액션', '범죄']},
+            {name: "fantasySF", genres: ['판타지', 'SF']},
+            {name: "thrillerHorror", genres: ['스릴러', '호러']},
         ]
-
-        const results = await Promise.all(genreGroup.map( async (group) => {
+        const results = await Promise.all(genreGroup.map(async (group) => {
             const recommendOttData = await Ip.findAll({
                 where: {
                     ott_platform: {
@@ -134,32 +131,43 @@ exports.recommendByGenre = async (req, res) => {
                 return {
                     ip_id: ott.dataValues.ip_id,
                     title: ott.dataValues.title,
-                    ott_platform: ott.dataValues.ott_platform,
                     genre: ott.dataValues.genre,
+                    platform: ott.dataValues.ott_platform.split(','),
+                    profile: ott.dataValues.ott_profile_link,
                     watch_time: ott.dataValues.watch_time,
-                    ott_profile: ott.dataValues.ott_profile_link,
                     type: "ott"
                 }
             })
-            const recommnedWebtoonList = recommendWebtoonData.map((webtoon) => {
+            const recommendWebtoonList = recommendWebtoonData.map((webtoon) => {
                 return {
                     ip_id: webtoon.dataValues.ip_id,
                     title: webtoon.dataValues.webtoon_title,
-                    webtoon_platform: webtoon.dataValues.webtoon_platform,
                     genre: webtoon.dataValues.genre,
+                    platform: webtoon.dataValues.webtoon_platform.split(','),
+                    profile: webtoon.dataValues.webtoon_profile_link,
                     view: webtoon.dataValues.total_views,
-                    webtoon_profile: webtoon.dataValues.webtoon_profile_link,
                     type: "webtoon"
                 }
             })
             shuffle(recommendOttList)
-            shuffle(recommnedWebtoonList)
+            shuffle(recommendWebtoonList)
 
-            return {[group.name]: [...recommendOttList.slice(0, 3), ...recommnedWebtoonList.slice(0, 3)]}
+            return {
+                [group.name]: {
+                    ottList: recommendOttList.slice(0, 3),
+                    webtoonList: recommendWebtoonList.slice(0, 3)
+                }
+            }
         }))
-        res.json(results)
+        const finalData = results.reduce((ipList, ip) => {
+            return {...ipList, ...ip};
+        }, {});
+
+        res.json(finalData)
+        //TODO: checkList
     } catch (err) {
         console.log(err)
         res.json({error: 'Failed to fetch recommend list'})
     }
 }
+
