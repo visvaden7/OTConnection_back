@@ -111,6 +111,10 @@ class Ip extends Sequelize.Model {
                     type: Sequelize.STRING,
                     allowNull: true
                 },
+                banner_link: {
+                    type: Sequelize.STRING,
+                    allowNull: true
+                },
             },
             {
                 sequelize,

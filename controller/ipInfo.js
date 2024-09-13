@@ -1,6 +1,8 @@
 const {Ip} = require("../models/")
 const {Op, Sequelize} = require("sequelize");
 const {shuffle} = require("../utils/shuffle");
+const Trends = require("../models/trends");
+const axios = require("axios");
 
 exports.focusWebtoonOttComboData = async (req, res) => {
     const sixMonthsAgo = new Date()
@@ -10,12 +12,9 @@ exports.focusWebtoonOttComboData = async (req, res) => {
             ott_platform: {
                 [Op.ne]: null,  // NULL 값이 아닌지 확인
                 [Op.ne]: ''     // 빈 문자열이 아닌지 확인 (필요한 경우)
-            },
-            webtoon_platform: {
-                [Op.ne]: null,
-                [Op.ne]: ''
-            },
-            release_date: {
+            }, webtoon_platform: {
+                [Op.ne]: null, [Op.ne]: ''
+            }, release_date: {
                 [Op.gte]: sixMonthsAgo  // 6개월 전 날짜 이후의 데이터만 가져옴
             }
         },
@@ -28,7 +27,7 @@ exports.focusWebtoonOttComboData = async (req, res) => {
         return {
             id: ip.dataValues.ip_id,
             title: ip.dataValues.title,
-            ott: ip.dataValues.ott_platform.split(','),
+            platform: ip.dataValues.ott_platform.split(','),
             webtoon: ip.dataValues.webtoon_platform,
             total_rating: (ip.dataValues.rating * 0.5 + ip.dataValues.imdb_rating * 0.5).toFixed(1),
             poster: ip.dataValues.ott_profile_link
@@ -45,14 +44,10 @@ exports.nowBestWebtoon = async (req, res) => {
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 24)
         const webtoonList = await Ip.findAll({
             where: {
-                [Op.or]: [
-                    {webtoon_end_date: {[Op.is]: null}}, // webtoon_end_date가 null인 경우
+                [Op.or]: [{webtoon_end_date: {[Op.is]: null}}, // webtoon_end_date가 null인 경우
                     {webtoon_end_date: {[Op.gte]: sixMonthsAgo}} // webtoon_end_date가 6개월 전 이후인 경우
                 ]
-            },
-            order: [
-                ['comments', 'DESC'],
-                [Sequelize.literal('ISNULL(webtoon_end_date)'), 'DESC'], // NULL이 먼저 오게 정렬
+            }, order: [['comments', 'DESC'], [Sequelize.literal('ISNULL(webtoon_end_date)'), 'DESC'], // NULL이 먼저 오게 정렬
                 ['webtoon_end_date', 'DESC']  // 나머지는 최신 날짜 순으로 정렬
             ],
         });
@@ -79,53 +74,36 @@ exports.nowBestWebtoon = async (req, res) => {
 
 exports.recommendByGenre = async (req, res) => {
     try {
-        const genreGroup = [
-            {name: "drama", genres: ["드라마"]},
-            {name: "romance", genres: ["로맨스"]},
-            {name: "actionCrime", genres: ['액션', '범죄']},
-            {name: "fantasySF", genres: ['판타지', 'SF']},
-            {name: "thrillerHorror", genres: ['스릴러', '호러']},
-        ]
+        const genreGroup = [{name: "drama", genres: ["드라마"]}, {name: "romance", genres: ["로맨스"]}, {
+            name: "actionCrime",
+            genres: ['액션', '범죄']
+        }, {name: "fantasySF", genres: ['판타지', 'SF']}, {name: "thrillerHorror", genres: ['스릴러', '호러']},]
         const results = await Promise.all(genreGroup.map(async (group) => {
             const recommendOttData = await Ip.findAll({
                 where: {
                     ott_platform: {
-                        [Op.ne]: null,
-                        [Op.ne]: ''
-                    },
-                    webtoon_platform: {
-                        [Op.ne]: null,
-                        [Op.ne]: ''
-                    },
-                    genre: {
+                        [Op.ne]: null, [Op.ne]: ''
+                    }, webtoon_platform: {
+                        [Op.ne]: null, [Op.ne]: ''
+                    }, genre: {
                         [Op.or]: group.genres.map(g => ({
                             [Op.like]: `%${g}%`
                         }))
                     }
-                },
-                order: [
-                    ['watch_time', 'DESC']
-                ]
+                }, order: [['watch_time', 'DESC']]
             })
             const recommendWebtoonData = await Ip.findAll({
                 where: {
                     ott_platform: {
-                        [Op.ne]: null,
-                        [Op.ne]: ''
-                    },
-                    webtoon_platform: {
-                        [Op.ne]: null,
-                        [Op.ne]: ''
-                    },
-                    genre: {
+                        [Op.ne]: null, [Op.ne]: ''
+                    }, webtoon_platform: {
+                        [Op.ne]: null, [Op.ne]: ''
+                    }, genre: {
                         [Op.or]: group.genres.map(g => ({
                             [Op.like]: `%${g}%`
                         }))
                     }
-                },
-                order: [
-                    ['total_views', 'DESC']
-                ]
+                }, order: [['total_views', 'DESC']]
             })
             const recommendOttList = recommendOttData.map((ott) => {
                 return {
@@ -154,8 +132,7 @@ exports.recommendByGenre = async (req, res) => {
 
             return {
                 [group.name]: {
-                    ottList: recommendOttList.slice(0, 3),
-                    webtoonList: recommendWebtoonList.slice(0, 3)
+                    ottList: recommendOttList.slice(0, 3), webtoonList: recommendWebtoonList.slice(0, 3)
                 }
             }
         }))
@@ -171,3 +148,65 @@ exports.recommendByGenre = async (req, res) => {
     }
 }
 
+exports.getIpDetail = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const ipDetailInfo = await Ip.findOne({
+            where: {ip_id: id},
+            include: {
+                model: Trends,
+                attributes: ['naver_keyword_search', 'naver_female_search', 'naver_male_search', 'naver_10_search', 'naver_20_search', 'naver_30_search', 'naver_40_search', 'naver_50_search'],
+            }, attributes: ['ip_id', 'title', 'genre', 'imdb_rating', 'banner_link', ['ott_platform', 'platform'],
+
+            ]
+        })
+
+        const response = await axios.get(`${process.env.BACKEND_SERVER_URL}/api/ip/tv/96648`)
+        const tmdbData = response.data
+        const actorList = tmdbData.actorListData.cast.map(person => {
+            return {
+                person_id: person.id,
+                charName: person.character,
+                role: person.known_for_department,
+                profile: `https://media.themoviedb.org/t/p/w138_and_h175_face/${person.profile_path}`
+            }
+        })
+
+        if (!ipDetailInfo) {
+            return res.status(404).json({error: "Ip not found"})
+        }
+        const ipData = ipDetailInfo.dataValues
+        const {ip_id, title, genre, imdb_rating, banner_link, platform} = ipData
+        const {naver_10_search, naver_20_search, naver_30_search, naver_40_search, naver_50_search } = ipData.Trends[0]
+        const totalAgeSearchNum = naver_10_search + naver_20_search + naver_30_search + naver_40_search + naver_50_search
+
+
+        const result = {
+            ip_id,
+            title,
+            imdb_rating,
+            banner_link,
+            genre: genre ? genre.split(',') : [],
+            platform: platform
+                ? platform.includes(',')
+                    ? platform.split(',')
+                    : [platform]
+                : [],
+            actorList: actorList,
+            trends: {
+                naver_male_search : ipData.Trends[0].naver_male_search,
+                naver_female_search : ipData.Trends[0].naver_female_search,
+                naver_10_search_percentage: (naver_10_search / totalAgeSearchNum * 100).toFixed(0),
+                naver_20_search_percentage: (naver_20_search / totalAgeSearchNum * 100).toFixed(0),
+                naver_30_search_percentage: (naver_30_search / totalAgeSearchNum * 100).toFixed(0),
+                naver_40_search_percentage: (naver_40_search / totalAgeSearchNum * 100).toFixed(0),
+                naver_50_search_percentage: (naver_50_search / totalAgeSearchNum * 100).toFixed(0)
+            }
+        }
+        res.json(result)
+    } catch (err) {
+        console.log("Error get IP Detail", err)
+        res.status(500).json({error: "Server Error"})
+    }
+
+}
