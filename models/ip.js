@@ -115,6 +115,10 @@ class Ip extends Sequelize.Model {
                     type: Sequelize.STRING,
                     allowNull: true
                 },
+                tmdb_id: {
+                    type: Sequelize.STRING,
+                    allowNull: true
+                }
             },
             {
                 sequelize,

@@ -3,6 +3,7 @@ const {Op, Sequelize} = require("sequelize");
 const {shuffle} = require("../utils/shuffle");
 const Trends = require("../models/trends");
 const axios = require("axios");
+const Person = require("../models/person");
 
 exports.focusWebtoonOttComboData = async (req, res) => {
     const sixMonthsAgo = new Date()
@@ -153,16 +154,26 @@ exports.getIpDetail = async (req, res) => {
         const {id} = req.params;
         const ipDetailInfo = await Ip.findOne({
             where: {ip_id: id},
-            include: {
-                model: Trends,
-                attributes: ['naver_keyword_search', 'naver_female_search', 'naver_male_search', 'naver_10_search', 'naver_20_search', 'naver_30_search', 'naver_40_search', 'naver_50_search'],
-            }, attributes: ['ip_id', 'title', 'genre', 'imdb_rating', 'banner_link', ['ott_platform', 'platform'],
-
-            ]
+            include: [
+                {
+                    model: Trends,
+                    attributes: ['naver_keyword_search', 'naver_female_search', 'naver_male_search', 'naver_10_search', 'naver_20_search', 'naver_30_search', 'naver_40_search', 'naver_50_search'],
+                },
+                {
+                    model: Person,
+                    attributes: ['name'],
+                    through: {attributes: []}
+                },
+            ],
+            attributes: ['ip_id', 'title', 'genre', 'imdb_rating', 'banner_link', ['ott_platform', 'platform'], 'tmdb_id']
         })
 
-        const response = await axios.get(`${process.env.BACKEND_SERVER_URL}/api/ip/tv/96648`)
+        const response = await axios.get(`${process.env.BACKEND_SERVER_URL}/api/ip/tv/${ipDetailInfo.dataValues.tmdb_id}`)
         const tmdbData = response.data
+        const ipOverview = tmdbData.tvSeriesData.overview
+        const seasonsInfo = tmdbData.tvSeriesData.seasons.map(season => {
+            return {season_name: season.name, season_overview: season.overview, episode_count: season.episode_count, release_date: season.air_date}
+        })
         const actorList = tmdbData.actorListData.cast.map(person => {
             return {
                 person_id: person.id,
@@ -172,12 +183,13 @@ exports.getIpDetail = async (req, res) => {
             }
         })
 
+        console.log(ipDetailInfo)
         if (!ipDetailInfo) {
             return res.status(404).json({error: "Ip not found"})
         }
         const ipData = ipDetailInfo.dataValues
         const {ip_id, title, genre, imdb_rating, banner_link, platform} = ipData
-        const {naver_10_search, naver_20_search, naver_30_search, naver_40_search, naver_50_search } = ipData.Trends[0]
+        const {naver_10_search, naver_20_search, naver_30_search, naver_40_search, naver_50_search} = ipData.Trends[0]
         const totalAgeSearchNum = naver_10_search + naver_20_search + naver_30_search + naver_40_search + naver_50_search
 
 
@@ -193,15 +205,20 @@ exports.getIpDetail = async (req, res) => {
                     : [platform]
                 : [],
             actorList: actorList,
+            crew: ipData.People.map(p => {
+                return p.name
+            }),
             trends: {
-                naver_male_search : ipData.Trends[0].naver_male_search,
-                naver_female_search : ipData.Trends[0].naver_female_search,
+                naver_male_search: ipData.Trends[0].naver_male_search,
+                naver_female_search: ipData.Trends[0].naver_female_search,
                 naver_10_search_percentage: (naver_10_search / totalAgeSearchNum * 100).toFixed(0),
                 naver_20_search_percentage: (naver_20_search / totalAgeSearchNum * 100).toFixed(0),
                 naver_30_search_percentage: (naver_30_search / totalAgeSearchNum * 100).toFixed(0),
                 naver_40_search_percentage: (naver_40_search / totalAgeSearchNum * 100).toFixed(0),
                 naver_50_search_percentage: (naver_50_search / totalAgeSearchNum * 100).toFixed(0)
-            }
+            },
+            overview: ipOverview,
+            seasonInfo: seasonsInfo
         }
         res.json(result)
     } catch (err) {

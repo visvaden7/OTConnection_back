@@ -13,10 +13,6 @@ class Person extends Sequelize.Model {
                     type: Sequelize.STRING(50),
                     allowNull: true,
                 },
-                birth_date: {
-                    type: Sequelize.DATE,
-                    allowNull: false,
-                },
                 role: {
                     type: Sequelize.STRING(50),
                 },
