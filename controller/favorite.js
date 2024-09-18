@@ -21,7 +21,6 @@ exports.checkFavorite = async (req, res) => {
 
 exports.addFavorite = async (req, res) => {
     try {
-        console.log("test", req.isAuthenticated)
         const {ip_id, user_id} = req.body
         console.log(ip_id, user_id)
         const check = await Favorite.findOrCreate({
