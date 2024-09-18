@@ -4,8 +4,8 @@ exports.sessionCheck = (req, res) => {
     console.log(">>>>Session ID:", req.sessionID);
     console.log(">>>>Session Data:", req.session);
     console.log(">>>>Authenticated", req.isAuthenticated())
-    const {email, nick, avatar} = req.user.dataValues
-    const userData = {email: email, nick: nick, avatar: avatar}
+    const {id, email, nick, avatar} = req.user.dataValues
+    const userData = {user_id: id, email: email, nick: nick, avatar: avatar}
     if (req.isAuthenticated()) {
         res.json({isLoggedIn: true, user: userData})
     } else {
