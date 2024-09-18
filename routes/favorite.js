@@ -7,6 +7,6 @@ router.post("/", addFavorite)
 
 router.delete("/", deleteFavorite)
 
-router.get("/check_favorite/:id",checkFavorite)
+router.get("/check_favorite",checkFavorite)
 
 module.exports = router
