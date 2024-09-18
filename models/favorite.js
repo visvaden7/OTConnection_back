@@ -31,8 +31,8 @@ class Favorite extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.User.belongsTo(db.User,{foreignKey:"id", sourceKey:"id"})
-        db.Ip.belongsTo(db.Ip, {foreignKey:"ip_id", sourceKey: "ip_id"})
+        db.Favorite.belongsTo(db.User,{foreignKey:"user_id", sourceKey:"id"})
+        db.Favorite.belongsTo(db.Ip, {foreignKey:"ip_id", sourceKey: "ip_id"})
     }
 }
 
