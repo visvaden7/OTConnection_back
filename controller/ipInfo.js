@@ -4,6 +4,7 @@ const {shuffle} = require("../utils/shuffle");
 const Trends = require("../models/trends");
 const axios = require("axios");
 const Person = require("../models/person");
+const OttUrl = require("../models/ottUrl");
 
 exports.focusWebtoonOttComboData = async (req, res) => {
     const sixMonthsAgo = new Date()
@@ -160,12 +161,17 @@ exports.getIpDetail = async (req, res) => {
                     attributes: ['naver_keyword_search', 'naver_female_search', 'naver_male_search', 'naver_10_search', 'naver_20_search', 'naver_30_search', 'naver_40_search', 'naver_50_search'],
                 },
                 {
+                    model: OttUrl,
+                    attributes: [['tving_url','tving'], ['netflix_url','netflix'], ['disneyplus_url','disneyPlus'],['wavve_url','wavve']]
+
+                },
+                {
                     model: Person,
                     attributes: ['name'],
                     through: {attributes: []}
-                },
+                }
             ],
-            attributes: ['ip_id', 'title', 'genre', 'imdb_rating', 'banner_link', ['ott_platform', 'platform'], 'tmdb_id']
+            attributes: ['ip_id', 'title', 'genre', 'imdb_rating', 'banner_link', ['ott_platform', 'platform'], 'tmdb_id', 'webtoon_title', 'webtoon_platform', 'webtoon_profile_link', 'likes', 'rating', 'interest', 'webtoon_chapter' ]
         })
 
         const response = await axios.get(`${process.env.BACKEND_SERVER_URL}/api/ip/tv/${ipDetailInfo.dataValues.tmdb_id}`)
@@ -188,16 +194,23 @@ exports.getIpDetail = async (req, res) => {
             return res.status(404).json({error: "Ip not found"})
         }
         const ipData = ipDetailInfo.dataValues
-        const {ip_id, title, genre, imdb_rating, banner_link, platform} = ipData
+        const {ip_id, title, genre, imdb_rating, banner_link, webtoon_title, webtoon_platform, webtoon_profile_link, likes, rating, interest, webtoon_chapter, platform} = ipData
         const {naver_10_search, naver_20_search, naver_30_search, naver_40_search, naver_50_search} = ipData.Trends[0]
         const totalAgeSearchNum = naver_10_search + naver_20_search + naver_30_search + naver_40_search + naver_50_search
-
+        const {tving, netflix, disneyPlus,wavve,} = ipData.OttUrls[0].dataValues
 
         const result = {
             ip_id,
             title,
             imdb_rating,
             banner_link,
+            webtoon_title,
+            webtoon_platform,
+            webtoon_profile_link,
+            likes,
+            rating,
+            interest,
+            webtoon_chapter,
             genre: genre ? genre.split(',') : [],
             platform: platform
                 ? platform.includes(',')
@@ -211,11 +224,14 @@ exports.getIpDetail = async (req, res) => {
             trends: {
                 naver_male_search: ipData.Trends[0].naver_male_search,
                 naver_female_search: ipData.Trends[0].naver_female_search,
-                naver_10_search_percentage: (naver_10_search / totalAgeSearchNum * 100).toFixed(0),
-                naver_20_search_percentage: (naver_20_search / totalAgeSearchNum * 100).toFixed(0),
-                naver_30_search_percentage: (naver_30_search / totalAgeSearchNum * 100).toFixed(0),
-                naver_40_search_percentage: (naver_40_search / totalAgeSearchNum * 100).toFixed(0),
-                naver_50_search_percentage: (naver_50_search / totalAgeSearchNum * 100).toFixed(0)
+                naver_10_search_percentage: Number((naver_10_search / totalAgeSearchNum * 100).toFixed(0)),
+                naver_20_search_percentage: Number((naver_20_search / totalAgeSearchNum * 100).toFixed(0)),
+                naver_30_search_percentage: Number((naver_30_search / totalAgeSearchNum * 100).toFixed(0)),
+                naver_40_search_percentage: Number((naver_40_search / totalAgeSearchNum * 100).toFixed(0)),
+                naver_50_search_percentage: Number((naver_50_search / totalAgeSearchNum * 100).toFixed(0))
+            },
+            ottUrls: {
+                TVING : tving, NETFLIX: netflix, DISNEY_PLUS: disneyPlus, WAVVE: wavve
             },
             overview: ipOverview,
             seasonInfo: seasonsInfo

@@ -6,12 +6,13 @@ const auth = require('./auth.js')
 const chart = require('./chart.js')
 const ipInfo = require('./ipInfo.js')
 const creator = require('./creator.js')
+const favorite = require('./favorite.js')
 
 router.use("/ip",ip)
 router.use("/auth",auth)
 router.use("/chart",chart)
 router.use("/ipInfo",ipInfo)
 router.use("/creator", creator)
-
+router.use("/favorite", favorite)
 
 module.exports = router;
