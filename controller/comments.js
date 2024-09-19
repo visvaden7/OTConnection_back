@@ -23,9 +23,9 @@ exports.addComments = async (req, res) => {
             userProfile,
             fullName,
             text,
-            replies: JSON.stringify(replies), // 배열을 문자열로 변환하여 저장
+            replies: JSON.stringify(replies),
         });
-        res.status(201).json(newComment); // 생성된 댓글을 반환
+        res.status(201).json(newComment);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to add comment' });
