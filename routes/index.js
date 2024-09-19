@@ -8,6 +8,7 @@ const ipInfo = require('./ipInfo.js')
 const creator = require('./creator.js')
 const favorite = require('./favorite.js')
 const comments = require('./comments')
+const post = require('./post')
 
 router.use("/ip",ip)
 router.use("/auth",auth)
@@ -16,4 +17,5 @@ router.use("/ipInfo",ipInfo)
 router.use("/creator", creator)
 router.use("/favorite", favorite)
 router.use("/comments", comments)
+router.use("/post",post)
 module.exports = router;
