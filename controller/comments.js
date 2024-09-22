@@ -13,14 +13,14 @@ exports.getComments = async (req, res) => {
 }
 
 exports.addComments = async (req, res) => {
-    const { userId, post_Id, avatarUrl, userProfile, fullName, text, replies } = req.body;
-    console.log(userId, post_Id, avatarUrl, userProfile, fullName, text, replies)
+    const { userId, postId, comId, avatarUrl, userProfile, fullName, text, replies } = req.body;
+    console.log(userId, postId, comId, avatarUrl, fullName, text, replies)
     try {
         const newComment = await Comments.create({
             user_id: userId,
-            post_id: post_Id,
+            post_id: postId,
+            com_id: comId,
             avatarUrl,
-            userProfile,
             fullName,
             text,
             replies: JSON.stringify(replies),
@@ -30,4 +30,12 @@ exports.addComments = async (req, res) => {
         console.error(err);
         res.status(500).json({ message: 'Failed to add comment' });
     }
+}
+
+exports.updateComments = async (req, res) => {
+    await Comments.update()
+}
+
+exports.deleteComments = async (req, res) => {
+    await Comments.destroy()
 }

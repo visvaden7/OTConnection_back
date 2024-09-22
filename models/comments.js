@@ -13,6 +13,10 @@ class Comments extends Sequelize.Model {
                     type: Sequelize.INTEGER,
                     allowNull: false,
                 },
+                com_id: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                },
                 post_id: {
                     type: Sequelize.INTEGER,
                     allowNull: false,
