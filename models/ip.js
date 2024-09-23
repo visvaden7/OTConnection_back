@@ -118,6 +118,22 @@ class Ip extends Sequelize.Model {
                 tmdb_id: {
                     type: Sequelize.STRING,
                     allowNull: true
+                },
+                webtoon_highlight: {
+                    type: Sequelize.STRING,
+                    allowNull: true
+                },
+                ott_highlight: {
+                    type: Sequelize.STRING,
+                    allowNull: true
+                },
+                diff_ott_webtoon: {
+                    type: Sequelize.STRING,
+                    allowNull: true
+                },
+                compare_youtube_url: {
+                    type: Sequelize.STRING,
+                    allowNull: true
                 }
             },
             {
