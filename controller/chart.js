@@ -3,6 +3,11 @@ const {Op, fn, literal} = require("sequelize");
 
 exports.verticalBarChartData = async(req, res) => {
     const top5Records = await Ip.findAll({
+        where:{
+            imdb_rating:{
+                [Op.ne]:null
+            }
+        },
         order: [['release_date', 'ASC']], // 특정 컬럼을 기준으로 내림차순 정렬
         limit: 5, // 상위 5개의 데이터만 불러옵니다.
     });
