@@ -41,7 +41,7 @@ exports.sideStackBarChartData = async(req, res) => {
     });
     const total = Object.values(platformCounts[0].dataValues).reduce((total, count) => total + count,0)
 
-    res.json({kakaoCount: platformCounts[0].dataValues.kakaoCount/total * 100, naverCount: platformCounts[0].dataValues.naverCount/total * 100})
+    res.json({kakaoCount: (platformCounts[0].dataValues.kakaoCount/total * 100).toFixed(0), naverCount: (platformCounts[0].dataValues.naverCount/total * 100).toFixed(0)})
 }
 
 exports.doughnutChartData = async(req, res) => {
@@ -50,7 +50,7 @@ exports.doughnutChartData = async(req, res) => {
             [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%NETFLIX%' THEN 1 END`)), 'NetflixCount'],
             [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%WAVVE%' THEN 1 END`)), 'WavveCount'],
             [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%TVING%' THEN 1 END`)), 'TvingCount'],
-            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%DISNEY+%' THEN 1 END`)), 'DisneyCount'],
+            [fn('COUNT', literal(`CASE WHEN ott_platform LIKE '%DISNEY_PLUS%' THEN 1 END`)), 'DisneyCount'],
         ]
     })
 

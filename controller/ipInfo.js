@@ -183,7 +183,7 @@ exports.getIpDetail = async (req, res) => {
         const actorList = tmdbData.actorListData.cast.map(person => {
             return {
                 person_id: person.id,
-                charName: person.character,
+                charName: person.name,
                 role: person.known_for_department,
                 profile: `https://media.themoviedb.org/t/p/w138_and_h175_face/${person.profile_path}`
             }
@@ -217,7 +217,7 @@ exports.getIpDetail = async (req, res) => {
                     ? platform.split(',')
                     : [platform]
                 : [],
-            actorList: actorList,
+            actorList: actorList.slice(0,5),
             crew: ipData.People.map(p => {
                 return p.name
             }),
