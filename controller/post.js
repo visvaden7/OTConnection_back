@@ -2,7 +2,6 @@ const {Ip, Post, VirtualCasting} = require("../models");
 exports.getPostType = async (req, res) => {
     try {
         const {id} = req.params;
-        console.log("test",id)
         const getType = await Post.findOne({
             where:{post_id: id},
             attributes: ['type']
@@ -28,7 +27,6 @@ exports.getComparePostDetail = async (req, res) => {
             where: {ip_id},
             attributes: ['ip_id', 'title', 'webtoon_title', 'webtoon_platform', 'webtoon_start_date', 'webtoon_end_date', 'total_views', 'rating', 'release_date', 'watch_time', 'imdb_rating', 'webtoon_highlight', 'ott_highlight', 'diff_ott_webtoon', 'compare_youtube_url']
         })
-        console.log(ipDetailInfo)
         if (!ipDetailInfo) {
             return res.status(404).json({error: "Ip not found"})
         }
@@ -84,8 +82,6 @@ exports.getPost = async (req, res) => {
             }
         });
 
-        console.log("test")
-
         // postList에서 ip_id를 기반으로 Ip 정보를 불러와 함께 매핑
         const mappedPostData = await Promise.all(postList.map(async post => {
             const ipDetailInfo = await Ip.findOne({
@@ -95,9 +91,11 @@ exports.getPost = async (req, res) => {
                     'webtoon_start_date', 'webtoon_end_date', 'total_views',
                     'rating', 'release_date', 'watch_time', 'imdb_rating',
                     'webtoon_highlight', 'ott_highlight', 'diff_ott_webtoon',
-                    'compare_youtube_url'
+                    'compare_youtube_url', 'compare_background_img_url'
                 ]
             });
+
+            console.log("test",ipDetailInfo)
 
             const virtualCastingInfoDetail = await VirtualCasting.findOne({
                 where: {virtual_casting_id: post.dataValues.virtual_casting_id}  // virtual_casting_id로 검색
@@ -123,7 +121,8 @@ exports.getPost = async (req, res) => {
                     webtoon_highlight: ipDetailInfo.webtoon_highlight ? ipDetailInfo.webtoon_highlight.split(',') : [],
                     ott_highlight: ipDetailInfo.ott_highlight ? ipDetailInfo.ott_highlight.split(',') : [],
                     diff_ott_webtoon: ipDetailInfo.diff_ott_webtoon ? ipDetailInfo.diff_ott_webtoon.split('.') : [],
-                    compare_youtube_url: ipDetailInfo.compare_youtube_url
+                    compare_youtube_url: ipDetailInfo.compare_youtube_url,
+                    compare_background_img_url: ipDetailInfo.dataValues.compare_background_img_url
                 } : null,
                 v_info: virtualCastingInfoDetail ? {
                         virtual_casting_title: virtualCastingInfoDetail.virtual_casting_title,
@@ -162,18 +161,18 @@ exports.getPost = async (req, res) => {
                         actor_sub3_casting2_url: virtualCastingInfoDetail.actor_sub3_casting2_url
                     }
                     : null
-
             };
         }));
 
         // 데이터를 type별로 분류
         const result = typeGroup.reduce((acc, type) => {
-            acc[type] = mappedPostData.filter(post => post.type === type);
+            acc[type] = mappedPostData
+                .filter(post => post.type === type)
+                .splice(0,3)
             return acc;
         }, {});
-
+        console.log(result.compare[0].ip_info)
         // 결과 로그와 응답
-        console.log(result);
         res.json(result);
     } catch (err) {
         console.error(err);
@@ -252,8 +251,6 @@ exports.getComparePost = async (req, res) => {
                 type: post.dataValues.type
             };
         }));
-
-        console.log(postWithIpDetails);
         res.json(postWithIpDetails)
 
     } catch (err) {
@@ -441,7 +438,6 @@ exports.putVirtualCastingPost = async (req, res) => {
             actor_sub3_casting1_recommend,
             actor_sub3_casting2_recommend
         } = req.body;  // 업데이트할 데이터
-        console.log("test check", actor_sub3_casting2_recommend)
         // 해당 postId에 대한 virtual_casting_id를 Post 테이블에서 가져오기
         const post = await Post.findOne({
             where: { post_id: postId },
