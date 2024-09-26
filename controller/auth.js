@@ -21,6 +21,7 @@ exports.googleLogout = async (req, res, next) => {  // 비동기 함수로 변�
                 if (err) return reject(err);
                 req.session.destroy((err) => {
                     if (err) return reject(err);
+                    console.log("test logout")
                     res.clearCookie('connect.sid', {
                         // domain: 'localhost',  // 로컬 환경에서는 일반적으로 설정하지 않아도 됨
                         secure: process.env.NODE_ENV === 'production',  // secure 옵션 일치
