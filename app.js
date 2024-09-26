@@ -20,9 +20,12 @@ const port = process.env.PORT || 8001
 app.set("port", parseInt(port))
 
 // cors처리
+console.log(process.env.FRONT_SERVER_URL, process.env.PRODUCTION_SERVER_URL)
 app.use(cors({
     credentials: true,
-    origin: [process.env.FRONT_SERVER_URL, process.env.PROD_DOMAIN, process.env.PRODUCTION_SERVER_URL]
+    origin: [
+        process.env.FRONT_SERVER_URL, process.env.PRODUCTION_SERVER_URL
+    ]
 }));
 
 

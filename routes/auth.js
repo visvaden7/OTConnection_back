@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const {googleLogout, sessionCheck, kakaoLogout} = require("../controller/auth");
+const {logout, sessionCheck} = require("../controller/auth");
 
 
-router.post('/googleLogout', googleLogout)
+router.post('/logout', logout)
 
-router.post('/kakaoLogout', kakaoLogout)
+// router.post('/kakaoLogout', kakaoLogout)
 
 router.get('/session-check', sessionCheck);
 
@@ -16,10 +16,8 @@ router.get(
         scope: ['openid', 'profile', 'email'],
         failureRedirect: "/?loginError=구글로그인 실패",
     }),
-    (req, res,next) => {
-        // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
-        // next()
+    (req, res) => {
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
     }
 );
 
@@ -33,7 +31,7 @@ router.get(
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
 
     }
 );
@@ -45,7 +43,7 @@ router.get(
     }),
     (req, res) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
     }
 );
 
@@ -57,7 +55,7 @@ router.get("/kakao/callback", passport.authenticate('kakao', {
         // console.log("connect.sid", req.cookies['connect.sid'])
         // console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
     })
 
 router.get(
@@ -67,7 +65,7 @@ router.get(
     }),
     (req, res) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
     }
 
 );
@@ -80,7 +78,7 @@ router.get("/naver/callback", passport.authenticate('naver', {
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
     })
 
 module.exports = router;
