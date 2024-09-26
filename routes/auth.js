@@ -18,7 +18,7 @@ router.get(
     }),
     (req, res,next) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PROD_DOMAIN)
+        res.redirect(process.env.PRODUCTION_SERVER_URL)
         // next()
     }
 );
@@ -33,7 +33,7 @@ router.get(
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PROD_DOMAIN)
+        res.redirect(process.env.PRODUCTION_SERVER_URL)
 
     }
 );
@@ -45,7 +45,7 @@ router.get(
     }),
     (req, res) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PROD_DOMAIN)
+        res.redirect(process.env.PRODUCTION_SERVER_URL)
     }
 );
 
@@ -57,7 +57,7 @@ router.get("/kakao/callback", passport.authenticate('kakao', {
         // console.log("connect.sid", req.cookies['connect.sid'])
         // console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PROD_DOMAIN)
+        res.redirect(process.env.PRODUCTION_SERVER_URL)
     })
 
 router.get(
@@ -67,7 +67,7 @@ router.get(
     }),
     (req, res) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PROD_DOMAIN)
+        res.redirect(process.env.PRODUCTION_SERVER_URL)
     }
 
 );
@@ -80,7 +80,7 @@ router.get("/naver/callback", passport.authenticate('naver', {
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PROD_DOMAIN)
+        res.redirect(process.env.PRODUCTION_SERVER_URL)
     })
 
 module.exports = router;

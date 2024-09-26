@@ -21,8 +21,8 @@ app.set("port", parseInt(port))
 
 // cors처리
 app.use(cors({
-    origin: [process.env.FRONT_SERVER_URL, process.env.PROD_DOMAIN, `https://${process.env.PROD_DOMAIN}`],
-    credentials: true
+    credentials: true,
+    origin: [process.env.FRONT_SERVER_URL, process.env.PROD_DOMAIN, process.env.PRODUCTION_SERVER_URL]
 }));
 
 
