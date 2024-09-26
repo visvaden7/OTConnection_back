@@ -8,7 +8,7 @@ module.exports = () => {
             {
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_SECRET_KEY,
-                callbackURL: process.env.GOOGLE_CALLBACK_URL,
+                callbackURL: process.env.NODE_ENV === 'production' ? process.env.GOOGLE_CALLBACK_PROD_URL : process.env.GOOGLE_CALLBACK_DEV_URL,
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
