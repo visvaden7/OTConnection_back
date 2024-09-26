@@ -1,4 +1,4 @@
-const {Favorite} = require("../models/")
+const {Favorite,Ip} = require("../models/")
 
 exports.checkFavorite = async (req, res) => {
     const {ip_id, user_id} = req.query
@@ -17,6 +17,29 @@ exports.checkFavorite = async (req, res) => {
 
     }
 
+}
+
+exports.getFavorite = async (req, res) => {
+    if(req.isAuthenticated()) {
+        console.log(req.user.id)
+        const data = await Favorite.findAll({
+            where:{user_id: req.user.id}
+        })
+
+        const ipIds = data.map(favorite => favorite.ip_id)
+        const ipData = await Ip.findAll({
+            where: { ip_id: ipIds },
+            attributes: ['ip_id', 'title', 'ott_profile_link']
+        });
+        const result = ipData.map(item => ({
+            ip_id: item.ip_id,
+            title: item.title,
+            ott_profile_link: item.ott_profile_link
+        }));
+        res.json(result)
+    } else {
+        res.json({name:"nope"})
+    }
 }
 
 exports.addFavorite = async (req, res) => {
