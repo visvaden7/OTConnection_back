@@ -21,6 +21,7 @@ exports.logout = async (req, res, next) => {
                 if (err) return reject(err);
                 req.session.destroy((err) => {
                     if (err) return reject(err);
+                    console.log("test logout")
                     res.clearCookie('connect.sid', {
                         secure: process.env.NODE_ENV === 'production',  // secure 옵션 일치
                         httpOnly: true,  // httpOnly 옵션 일치
