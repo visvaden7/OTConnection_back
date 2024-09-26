@@ -31,7 +31,8 @@ router.get(
         // 로그인 성공 시, accessToken과 profile 정보를 프론트엔드로 전달
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
-        res.redirect(process.env.FRONT_SERVER_URL)
+        // res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect(process.env.PROD_DOMAIN)
 
     }
 );
@@ -42,7 +43,8 @@ router.get(
         failureRedirect: "/?loginError=카카오로그인 실패",
     }),
     (req, res) => {
-        res.redirect(process.env.FRONT_SERVER_URL)
+        // res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect(process.env.PROD_DOMAIN)
     }
 );
 
@@ -53,7 +55,8 @@ router.get("/kakao/callback", passport.authenticate('kakao', {
     (req, res) => {
         // console.log("connect.sid", req.cookies['connect.sid'])
         // console.log("AccessToken", req.cookies['accessToken'])
-        res.redirect(process.env.FRONT_SERVER_URL)
+        // res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect(process.env.PROD_DOMAIN)
     })
 
 router.get(
@@ -62,8 +65,10 @@ router.get(
         failureRedirect: "/?loginError=네이버로그인 실패",
     }),
     (req, res) => {
-        res.redirect(process.env.FRONT_SERVER_URL)
+        // res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect(process.env.PROD_DOMAIN)
     }
+
 );
 
 
@@ -73,7 +78,8 @@ router.get("/naver/callback", passport.authenticate('naver', {
     (req, res) => {
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
-        res.redirect(process.env.FRONT_SERVER_URL)
+        // res.redirect(process.env.FRONT_SERVER_URL)
+        res.redirect(process.env.PROD_DOMAIN)
     })
 
 module.exports = router;
