@@ -18,8 +18,9 @@ router.get(
     }),
     (req, res,next) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        // res.redirect(process.env.PRODUCTION_SERVER_URL)
         // next()
+        res.redirect("/")
     }
 );
 
@@ -33,7 +34,7 @@ router.get(
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
+        res.redirect("/")
 
     }
 );
