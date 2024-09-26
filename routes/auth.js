@@ -18,8 +18,8 @@ router.get(
     }),
     (req, res,next) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.PRODUCTION_SERVER_URL)
-        // next()
+        // res.redirect(process.env.PRODUCTION_SERVER_URL)
+        next()
     }
 );
 
