@@ -10,7 +10,7 @@ module.exports = () => {
       {
         clientID: process.env.NAVER_ID,
         clientSecret: process.env.NAVER_SECRET_KEY,
-        callbackURL: process.env.NAVER_CALLBACK_URL,
+        callbackURL: process.env.NODE_ENV === 'production' ? process.env.NAVER_CALLBACK_PROD_URL : process.env.KAKAO_CALLBACK_DEV_URL
       },
       async (accessToken, refreshToken, profile, done) => {
         try {

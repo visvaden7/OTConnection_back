@@ -3,7 +3,9 @@ exports.getPostType = async (req, res) => {
     try {
         const {id} = req.params;
         const getType = await Post.findOne({
-            where:{post_id: id},
+            where: {
+                post_id: id
+            },
             attributes: ['type']
         })
 
@@ -13,18 +15,18 @@ exports.getPostType = async (req, res) => {
         console.log(err)
     }
 }
-exports.getPostId = async(req, res) => {
+exports.getPostId = async (req, res) => {
     try {
         const {id} = req.params
         console.log(id)
         const getPostId = await Post.findOne({
-            where:{ip_id: id},
-            attributes:['post_id', ]
+            where: {ip_id: id},
+            attributes: ['post_id',]
         })
         const postId = {postId: getPostId.dataValues.post_id}
 
         res.json(postId)
-    } catch(err) {
+    } catch (err) {
 
     }
 }
@@ -97,7 +99,7 @@ exports.getPost = async (req, res) => {
             }
         });
 
-        // postList에서 ip_id를 기반으로 Ip 정보를 불러와 함께 매핑
+        // postList 에서 ip_id를 기반으로 Ip 정보를 불러와 함께 매핑
         const mappedPostData = await Promise.all(postList.map(async post => {
             const ipDetailInfo = await Ip.findOne({
                 where: {ip_id: post.dataValues.ip_id},
@@ -110,18 +112,16 @@ exports.getPost = async (req, res) => {
                 ]
             });
 
-            console.log("test",ipDetailInfo)
-
             const virtualCastingInfoDetail = await VirtualCasting.findOne({
                 where: {virtual_casting_id: post.dataValues.virtual_casting_id}  // virtual_casting_id로 검색
             });
 
-            // post와 ipDetailInfo 데이터 매핑
+            // post 와 ipDetailInfo 데이터 매핑
             return {
                 post_id: post.dataValues.post_id,
                 com_id: post.dataValues.com_id,
                 ip_id: post.dataValues.ip_id,
-                type: post.dataValues.type, // type을 추가
+                type: post.dataValues.type, // type 을 추가
                 ip_info: ipDetailInfo ? {
                     title: ipDetailInfo.title,
                     webtoon_title: ipDetailInfo.webtoon_title,
@@ -179,11 +179,11 @@ exports.getPost = async (req, res) => {
             };
         }));
 
-        // 데이터를 type별로 분류
+        // 데이터를 type 별로 분류
         const result = typeGroup.reduce((acc, type) => {
             acc[type] = mappedPostData
                 .filter(post => post.type === type)
-                .splice(0,3)
+                .splice(0, 3)
             return acc;
         }, {});
         console.log(result.compare[0].ip_info)
@@ -202,7 +202,7 @@ exports.getComparePost = async (req, res) => {
             where: {type: "compare"}
         });
 
-        // postList에서 ip_id를 기반으로 ip 정보를 가져옴
+        // postList 에서 ip_id를 기반으로 ip 정보를 가져옴
         const postWithIpDetails = await Promise.all(postList.map(async (post) => {
             // ip_id로 ip 정보를 불러옴
             const ipDetailInfo = await Ip.findOne({
@@ -275,12 +275,12 @@ exports.getComparePost = async (req, res) => {
 
 exports.getVirtualCastingPost = async (req, res) => {
     try {
-        // Post 데이터 가져오기 (type이 v-casting인 경우)
+        // Post 데이터 가져오기 (type 이 v-casting 인 경우)
         const postList = await Post.findAll({
             where: {type: "v_casting"}
         });
 
-        // 각 post에 대한 VirtualCasting 정보 추가
+        // 각 post 에 대한 VirtualCasting 정보 추가
         const postWithCastingDetails = await Promise.all(postList.map(async (post) => {
             // VirtualCasting 정보 가져오기
             const virtualCastingInfoDetail = await VirtualCasting.findOne({
@@ -388,24 +388,24 @@ exports.getVirtualCastingPost = async (req, res) => {
 
 exports.getVirtualCastingPostDetail = async (req, res) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
-        // Post에서 해당 id로 virtual_casting_id와 ip_id 가져오기
+        // Post 에서 해당 id로 virtual_casting_id와 ip_id 가져오기
         const post = await Post.findOne({
-            where: { post_id: id },
+            where: {post_id: id},
             attributes: ['virtual_casting_id', 'ip_id']
         });
 
-        // 해당 post가 존재하지 않는 경우 처리
+        // 해당 post 가 존재하지 않는 경우 처리
         if (!post) {
-            return res.status(404).json({ error: 'Post not found' });
+            return res.status(404).json({error: 'Post not found'});
         }
 
-        const { ip_id, virtual_casting_id } = post.dataValues;
+        const {ip_id, virtual_casting_id} = post.dataValues;
 
         // IP 상세 정보 가져오기
         const ipDetailInfo = await Ip.findOne({
-            where: { ip_id },
+            where: {ip_id},
             attributes: [
                 'ip_id', 'title', 'webtoon_title', 'webtoon_platform',
                 'webtoon_start_date', 'webtoon_end_date', 'rating', 'imdb_rating'
@@ -414,20 +414,20 @@ exports.getVirtualCastingPostDetail = async (req, res) => {
 
         // IP 정보가 없는 경우 처리
         if (!ipDetailInfo) {
-            return res.status(404).json({ error: 'IP details not found' });
+            return res.status(404).json({error: 'IP details not found'});
         }
 
         // Virtual Casting 상세 정보 가져오기
         const virtualDetailInfo = await VirtualCasting.findOne({
-            where: { virtual_casting_id }
+            where: {virtual_casting_id}
         });
 
         // Virtual Casting 정보가 없는 경우 처리
         if (!virtualDetailInfo) {
-            return res.status(404).json({ error: 'Virtual casting details not found' });
+            return res.status(404).json({error: 'Virtual casting details not found'});
         }
 
-        // 필요한 데이터만 추출하여 JSON으로 반환
+        // 필요한 데이터만 추출하여 JSON 으로 반환
         const result = {
             ...ipDetailInfo.dataValues,  // IP 정보를 그대로 추가
             ...virtualDetailInfo.dataValues // Virtual Casting 정보를 그대로 추가
@@ -436,7 +436,7 @@ exports.getVirtualCastingPostDetail = async (req, res) => {
         res.json(result);
     } catch (err) {
         console.error("Error fetching compare post detail:", err);
-        res.status(500).json({ error: "Server Error" });
+        res.status(500).json({error: "Server Error"});
     }
 };
 
@@ -455,24 +455,24 @@ exports.putVirtualCastingPost = async (req, res) => {
         } = req.body;  // 업데이트할 데이터
         // 해당 postId에 대한 virtual_casting_id를 Post 테이블에서 가져오기
         const post = await Post.findOne({
-            where: { post_id: postId },
+            where: {post_id: postId},
             attributes: ['virtual_casting_id']
         });
         const virtual_casting_id = post.dataValues.virtual_casting_id
         if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
+            return res.status(404).json({message: 'Post not found'});
         }
 
         // 해당 virtual_casting_id로 VirtualCasting 테이블에서 해당 캐스팅 정보를 업데이트
         const virtualCasting = await VirtualCasting.findOne({
-            where: { virtual_casting_id: virtual_casting_id }
+            where: {virtual_casting_id: virtual_casting_id}
         });
 
         if (!virtualCasting) {
-            return res.status(404).json({ message: 'Virtual casting not found' });
+            return res.status(404).json({message: 'Virtual casting not found'});
         }
 
-        console.log("test",virtualCasting.dataValues)
+        console.log("test", virtualCasting.dataValues)
 
         // 전달받은 데이터로 필드 업데이트
         await virtualCasting.update({
@@ -486,10 +486,10 @@ exports.putVirtualCastingPost = async (req, res) => {
             actor_sub3_casting2_recommend: actor_sub3_casting2_recommend || virtualCasting.actor_sub3_casting2_recommend
         });
 
-        return res.json({ message: 'Virtual casting post updated successfully' });
+        return res.json({message: 'Virtual casting post updated successfully'});
     } catch (err) {
         console.error('Error updating virtual casting post:', err);
-        return res.status(500).json({ error: 'Server error' });
+        return res.status(500).json({error: 'Server error'});
     }
 };
 

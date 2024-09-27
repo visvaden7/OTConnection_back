@@ -27,7 +27,7 @@ router.get(
         failureRedirect: "/?loginError=구글로그인 실패",
     }),
     (req, res) => {
-        // 로그인 성공 시, accessToken과 profile 정보를 프론트엔드로 전달
+        // 로그인 성공 시, accessToken 과 profile 정보를 프론트엔드로 전달
         console.log("connect.sid", req.cookies['connect.sid'])
         console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
@@ -41,10 +41,10 @@ router.get(
     passport.authenticate("kakao", {
         failureRedirect: "/?loginError=카카오로그인 실패",
     }),
-    (req, res, next) => {
+    (req, res, _next) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        // res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
-        next()
+        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
+        // next()
     }
 );
 

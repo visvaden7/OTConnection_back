@@ -14,7 +14,7 @@ exports.sessionCheck = (req, res) => {
 
 exports.logout = async (req, res, next) => {
     try {
-        console.log("test")
+        console.log("testtest")
         // Passport 로그아웃 및 세션 삭제
         await new Promise((resolve, reject) => {
             req.logout((err) => {

@@ -8,7 +8,7 @@ const cors = require('cors');
 const dotenv = require("dotenv")
 const passport = require("passport");
 const passportConfig = require("./passport");
-const { sequelize } = require("./models");
+const {sequelize} = require("./models");
 const app = express();
 const routes = require('./routes/');
 const {onError, errorHandler} = require('./utils/error')
@@ -22,10 +22,12 @@ app.set("port", parseInt(port))
 // cors처리
 console.log(process.env.FRONT_SERVER_URL, process.env.PRODUCTION_SERVER_URL)
 app.use(cors({
-    credentials: true,
     origin: [
-        process.env.FRONT_SERVER_URL, process.env.PRODUCTION_SERVER_URL
-    ]
+        "https://otconnection.link",
+        process.env.FRONT_SERVER_URL,
+        process.env.PRODUCTION_SERVER_URL
+    ],
+    credentials: true
 }));
 
 
@@ -42,7 +44,7 @@ app.use(express.urlencoded({extended: false}));
 //DB
 
 sequelize
-    .sync({ force: false })
+    .sync({force: false})
     .then(() => {
         console.log("데이터베이스 연결 성공");
     })
@@ -67,7 +69,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 //route
 app.use('/api', routes);
