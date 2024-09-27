@@ -1,6 +1,6 @@
 const express = require("express")
 const {getComparePostDetail, getPost, getComparePost, getVirtualCastingPost, getPostType, getVirtualCastingPostDetail,
-    putVirtualCastingPost
+    putVirtualCastingPost, getPostId
 } = require("../controller/post");
 const router = express.Router()
 
@@ -12,5 +12,6 @@ router.get("/postList", getPost)
 router.get("/compareList", getComparePost)
 router.get("/virtual-casting", getVirtualCastingPost)
 router.post("/virtual-casting", putVirtualCastingPost)
+router.get("/getPostId/:id", getPostId)
 
 module.exports = router;

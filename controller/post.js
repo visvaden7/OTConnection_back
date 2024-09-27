@@ -13,6 +13,21 @@ exports.getPostType = async (req, res) => {
         console.log(err)
     }
 }
+exports.getPostId = async(req, res) => {
+    try {
+        const {id} = req.params
+        console.log(id)
+        const getPostId = await Post.findOne({
+            where:{ip_id: id},
+            attributes:['post_id', ]
+        })
+        const postId = {postId: getPostId.dataValues.post_id}
+
+        res.json(postId)
+    } catch(err) {
+
+    }
+}
 
 exports.getComparePostDetail = async (req, res) => {
     try {
