@@ -41,9 +41,10 @@ router.get(
     passport.authenticate("kakao", {
         failureRedirect: "/?loginError=카카오로그인 실패",
     }),
-    (req, res) => {
+    (req, res, next) => {
         // res.redirect(process.env.FRONT_SERVER_URL)
-        res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
+        // res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
+        next()
     }
 );
 
@@ -52,8 +53,8 @@ router.get("/kakao/callback", passport.authenticate('kakao', {
         failureRedirect: "/?loginError='카카오로그인 실패"
     }),
     (req, res) => {
-        // console.log("connect.sid", req.cookies['connect.sid'])
-        // console.log("AccessToken", req.cookies['accessToken'])
+        console.log("connect.sid", req.cookies['connect.sid'])
+        console.log("AccessToken", req.cookies['accessToken'])
         // res.redirect(process.env.FRONT_SERVER_URL)
         res.redirect(process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_SERVER_URL : process.env.FRONT_SERVER_URL)
     })
