@@ -34,46 +34,164 @@ OTT 드라마와의 연관성을 시각화합니다.
      * IntelliJ
      * Visual Studio Code
    * Frontend
+     * TypeScript
      * React
      * CSS - ANT DESIGN 
    * Backend
      * Nodejs
+     * Express
+     * JS
+     * PM2
+     * Nginx
    * DB
      * AWS RDS
-   * CI/CD
-     * AWS EC2
-     * Nginx
    * INFRA
      * Route53
      * ACM (Amazon Certificate Manager)
      * ABL (Application Load Balancer)
-
+     * EC2
 
 ### 🌳Backend 구조
 
 ```plantuml
-/project-fandom
-│
-├── /config
-├── /controllers           # 비즈니스 로직 처리
-├── /doc                   # 프로젝트 설명 및 사용 방법 관련 문서
-├── /models                # DB 스키마 및 모델
-├── /public                # 정적 파일 (이미지, CSS, JavaScript 등)
-├── /routes                # 라우팅
-├── /utils                 # 유틸리티 함수 및 헬퍼 함수
-├── /views                 # 뷰 파일 (서버 사이드 렌더링 시)
-├── .env                   # 환경 변수 설정 파일
-├── app.js                 # Express 애플리케이션 초기화
-├── .gitignore             # Git에서 제외할 파일 및 폴더 목록
-└── package.json           # 프로젝트 메타데이터 및 의존성 목록 
+project_fandom
+├── config
+│   └── config.js
+├── controller
+│   ├── auth.js
+│   ├── chart.js
+│   ├── comments.js
+│   ├── creator.js
+│   ├── favorite.js
+│   ├── ip.js
+│   ├── iplInfo.js
+│   └── post.js
+├── doc
+│   └── README.MD
+├── models
+│   ├── comments.js
+│   ├── favorite.js
+│   ├── index.js
+│   ├── ip.js
+│   ├── ottUrl.js
+│   ├── person.js
+│   ├── post.js
+│   ├── trends.js
+│   ├── user.js
+│   └── virtualCasting.js
+├── passport
+│   ├── googleStrategy.js
+│   ├── index.js
+│   ├── kakaoStrategy.js
+│   └── naverStrategy.js
+├── public
+│   ├── dist
+│   ├── images
+│   ├── javascripts
+│   └── stylesheets
+├── routes
+│   ├── auth.js
+│   ├── chart.js
+│   ├── comments.js
+│   ├── creator.js
+│   ├── favorite.js
+│   ├── index.js
+│   ├── ip.js
+│   ├── iplInfo.js
+│   └── post.js
+├── utils
+│   ├── error.js
+│   ├── insertActorInfo.js
+│   └── shuffle.js
+├── views
+│   ├── error.pug
+│   ├── index.pug
+│   └── layout.pug
+├── .env
+├── .gitignore
+├── app.js
+├── package.json
+├── package-lock.json
+└── README.MD
+ 
 
 ```
 
-[//]: # (인프라 구성도)
+### 🌳FRONTEND 구조
+```plantuml
+project_fandom
+├── config
+│   └── config.js
+├── controller
+│   ├── auth.js
+│   ├── chart.js
+│   ├── comments.js
+│   ├── creator.js
+│   ├── favorite.js
+│   ├── ip.js
+│   ├── iplInfo.js
+│   └── post.js
+├── doc
+│   └── README.MD
+├── models
+│   ├── comments.js
+│   ├── favorite.js
+│   ├── index.js
+│   ├── ip.js
+│   ├── ottUrl.js
+│   ├── person.js
+│   ├── post.js
+│   ├── trends.js
+│   ├── user.js
+│   └── virtualCasting.js
+├── passport
+│   ├── googleStrategy.js
+│   ├── index.js
+│   ├── kakaoStrategy.js
+│   └──  naverStrategy.js
+├── public
+│   ├── dist               
+│   └── images
+├── routes
+│   ├── auth.js
+│   ├── chart.js
+│   ├── comments.js
+│   ├── creator.js
+│   ├── favorite.js
+│   ├── index.js
+│   ├── ip.js
+│   ├── iplInfo.js
+│   └── post.js
+├── utils
+│   ├── error.js
+│   ├── insertActorInfo.js
+│   └── shuffle.js
+├── views
+│   ├── error.pug
+│   ├── index.pug
+│   └── layout.pug
+├── .env                    
+├── .gitignore
+├── app.js
+├── package.json
+├── package-lock.json
+└── README.MD
+```
 
 
-[//]: # (ERD 다이어그램)
 
+
+### 🔩 인프라 구성도
+![img_1.png](img_1.png)
+
+- Route53 (Hosting)
+- ACM(Amazon Certificate Manager) 
+- ABL(Application Load Balancer) 
+- EC2 
+- RDS
+
+### 🫙 ERD 다이어그램
+![img_2.png](img_2.png)
 ----
 
 ### 📀 Installation
@@ -89,9 +207,30 @@ npm install
 
 [//]: # (- 기획서 :)
 
-[//]: # (- 와이어프레임 :)
+### 📺화면 :
+![img_3.png](img_3.png)
 
-[//]: # (- ERD :)
+![img_5.png](img_5.png)
+
+![img_6.png](img_6.png)
+
+![img_7.png](img_7.png)
+
+![img_8.png](img_8.png)
+
+![img_9.png](img_9.png)
+
+![img_10.png](img_10.png)
+
+![img_12.png](img_12.png)
+
+![img_11.png](img_11.png)
+
+![img_13.png](img_13.png)
+
+![img_14.png](img_14.png)
+
+![img_15.png](img_15.png)
 
 Welcome to the project_fandom_back wiki!
 
