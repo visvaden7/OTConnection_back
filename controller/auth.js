@@ -23,7 +23,7 @@ exports.logout = async (req, res, next) => {
                     console.log("test logout")
                     res.clearCookie('connect.sid', {
                         httpOnly: true,  // httpOnly 옵션 일치
-                        secure: process.env.NODE_ENV === 'production',  // secure 옵션 일치
+                        secure: false, //process.env.NODE_ENV === 'production',  // secure 옵션 일치
                         expires: new Date(0)  // 과거 날짜로 설정하여 즉시 삭제되도록 설정
                     });
                     resolve();

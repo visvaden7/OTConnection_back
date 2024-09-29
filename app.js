@@ -61,7 +61,7 @@ app.use(
         secret: process.env.COOKIE_SECRET,  // 환경 변수에서 비밀키를 가져옴
         cookie: {
             httpOnly: true,  // 클라이언트 측에서 Javascript 로 쿠키 접근을 막음
-            secure: process.env.NODE_ENV === 'production',  // HTTPS 에서만 전송되도록 설정 (개발 환경에서는 false)
+            secure: false,//process.env.NODE_ENV === 'production',  // HTTPS 에서만 전송되도록 설정 (개발 환경에서는 false)
             maxAge: 1000 * 60 * 15,  // 쿠키의 수명: 15분
         },
     })
