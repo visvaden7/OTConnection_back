@@ -19,7 +19,7 @@ dotenv.config()
 const port = process.env.PORT || 8001
 app.set("port", parseInt(port))
 
-// cors처리
+// CORS 처리
 console.log(process.env.FRONT_SERVER_URL, process.env.PRODUCTION_SERVER_URL)
 app.use(cors({
     origin: [
@@ -51,17 +51,17 @@ sequelize
     .catch((err) => {
         console.error(err);
     });
-
+console.log("test secure", process.env.NODE_ENV === 'production', process.env.NODE_ENV, typeof process.env.NODE_ENV)
 // //session
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
     session({
-        resave: false,
-        saveUninitialized: false,  // 초기화되지 않은 세션은 저장되지 않음
+        resave: process.env.NODE_ENV === 'production',
+        saveUninitialized: process.env.NODE_ENV === 'production',  // 초기화되지 않은 세션은 저장되지 않음
         secret: process.env.COOKIE_SECRET,  // 환경 변수에서 비밀키를 가져옴
         cookie: {
-            httpOnly: true,  // 클라이언트 측에서 JavaScript로 쿠키 접근을 막음
-            secure: process.env.NODE_ENV === 'production',  // HTTPS에서만 전송되도록 설정 (개발 환경에서는 false)
+            httpOnly: true,  // 클라이언트 측에서 Javascript 로 쿠키 접근을 막음
+            secure: process.env.NODE_ENV === 'production',  // HTTPS 에서만 전송되도록 설정 (개발 환경에서는 false)
             maxAge: 1000 * 60 * 15,  // 쿠키의 수명: 15분
         },
     })
@@ -74,7 +74,7 @@ app.use(passport.session());
 app.use('/api', routes);
 // 정적 파일을 서빙하기 위한 설정 (리액트 빌드 파일)
 app.use(express.static(path.join(__dirname, 'public/dist')));
-// React Router를 위해 모든 경로를 index.html로 리디렉션
+// React Router 를 위해 모든 경로를 index. 으로 리디렉션
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/dist', 'index.html')); // 올바른 경로 설정
 });
